@@ -1,0 +1,6 @@
+Poppins|delete
+"Open Sans"|var(--font-2)
+Open Sans|var(--font-2)
+#717171|var(--text-color)
+#C62828|var(--accent)
+#ffb74d|var(--contrast)
