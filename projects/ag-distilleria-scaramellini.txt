@@ -1,4 +1,8 @@
 "Noto Serif"|delete
+var(--Black, #090300)|var(--bg-dark)
+var(--Brown-Dark, #271306)|var(--bg)
+var(--beige, #DAC6A4)|var(--contrast-light)
+var(--yellow, #FFD940)|var(--yellow)
 #945435|var(--accent)
 #461700|var(--accent-dark)
 #6B2400|var(--accent-deep)
@@ -6,6 +10,7 @@
 #C1977B|var(--contrast)
 #DAC6A4|var(--contrast-light)
 #957D6E|var(--muted)
+#FFD940|var(--yellow)
 #271306|var(--bg)
 #090300|var(--bg-dark)
 #2E1A10|var(--bg-light)
