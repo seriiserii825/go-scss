@@ -7,8 +7,15 @@
 // Протокол Chrome: на stdin/stdout сообщения вида
 // [4 байта длины, little-endian][JSON].
 //
-// Запрос:  {"text": "...css...", "project": "ag-axel", "toRem": false}
-// Ответ:   {"output": "...css..."} или {"error": "..."}
+// Конвертация:
+//
+//	запрос:  {"text": "...css...", "project": "ag-axel", "toRem": false}
+//	ответ:   {"output": "...css..."} или {"error": "..."}
+//
+// Список проектов (action "list"):
+//
+//	запрос:  {"action": "list"}
+//	ответ:   {"projects": ["ag-axel", "bs-idea-serramenti", ...]}
 package main
 
 import (
@@ -18,6 +25,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/seriiserii825/go-scss/scss"
@@ -27,14 +35,16 @@ import (
 const projectsDir = "Documents/go/go-scss/projects"
 
 type request struct {
+	Action  string `json:"action,omitempty"`
 	Text    string `json:"text"`
 	Project string `json:"project"`
 	ToRem   bool   `json:"toRem"`
 }
 
 type response struct {
-	Output string `json:"output,omitempty"`
-	Error  string `json:"error,omitempty"`
+	Output   string   `json:"output,omitempty"`
+	Projects []string `json:"projects,omitempty"`
+	Error    string   `json:"error,omitempty"`
 }
 
 func main() {
@@ -54,11 +64,40 @@ func serve(in io.Reader, out io.Writer) error {
 }
 
 func handle(req request) response {
+	if req.Action == "list" {
+		projects, err := listProjects()
+		if err != nil {
+			return response{Error: err.Error()}
+		}
+		return response{Projects: projects}
+	}
 	vars, err := loadProjectVars(req.Project)
 	if err != nil {
 		return response{Error: err.Error()}
 	}
 	return response{Output: scss.Process(req.Text, vars, req.ToRem)}
+}
+
+// listProjects возвращает имена файлов замен без расширения, по алфавиту.
+func listProjects() ([]string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return nil, err
+	}
+	entries, err := os.ReadDir(filepath.Join(home, projectsDir))
+	if err != nil {
+		return nil, err
+	}
+	projects := []string{}
+	for _, e := range entries {
+		name := e.Name()
+		if e.IsDir() || !strings.HasSuffix(name, ".txt") {
+			continue
+		}
+		projects = append(projects, strings.TrimSuffix(name, ".txt"))
+	}
+	sort.Strings(projects)
+	return projects, nil
 }
 
 // Пустое имя проекта — конвертация без замен из файла переменных.

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
+	"strings"
 	"testing"
 )
 
@@ -32,5 +33,17 @@ func TestServeRoundTrip(t *testing.T) {
 func TestRejectsPathTraversal(t *testing.T) {
 	if _, err := loadProjectVars("../secret"); err == nil {
 		t.Fatal("expected error for traversal name")
+	}
+}
+
+func TestListProjects(t *testing.T) {
+	resp := handle(request{Action: "list"})
+	if resp.Error != "" {
+		t.Fatalf("list error: %s", resp.Error)
+	}
+	for _, p := range resp.Projects {
+		if p == "" || strings.HasSuffix(p, ".txt") {
+			t.Fatalf("bad project name %q", p)
+		}
 	}
 }
