@@ -1,0 +1,7 @@
+'Arial'|delete
+Arial|delete
+#004069|var(--accent)
+#003153|var(--accent-dark)
+#b6cbda|var(--accent-light)
+#6e818f|var(--contrast)
+'SpaceGrotesk'|var(--font-2)
