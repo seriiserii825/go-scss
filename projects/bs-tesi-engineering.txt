@@ -5,3 +5,4 @@ Arial|delete
 #b6cbda|var(--accent-light)
 #6e818f|var(--contrast)
 'SpaceGrotesk'|var(--font-2)
+'Space Grotesk'|var(--font-2)
